@@ -1,0 +1,236 @@
+
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinguaMemo - Регистрация</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        :root {
+            --yellow: #FFD700;
+            --lilac: #C8A2C8;
+            --dark-blue: #1B2B4F;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-blue) 0%, #0F1A2E 100%);
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        }
+
+        .register-box {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-top: 5px solid var(--yellow);
+        }
+
+        .logo {
+            color: var(--dark-blue);
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: var(--yellow);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--lilac);
+            box-shadow: 0 0 0 3px rgba(200, 162, 200, 0.2);
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, var(--yellow), #FFA500);
+            color: var(--dark-blue);
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .login-link {
+            color: var(--dark-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-link:hover {
+            color: var(--lilac);
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-control.error-input {
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="row w-100" style="max-width: 450px;">
+        <div class="col-12">
+
+            <div class="register-box">
+
+                <div class="text-center mb-4">
+                    <div class="logo">Lingua<span>Memo</span></div>
+                    <p class="text-muted mt-2">Изучай немецкий с нейросетью</p>
+                </div>
+
+                <h5 class="text-center mb-4" style="color: var(--dark-blue);">Регистрация</h5>
+
+                <form id="registerForm">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Ваше имя</label>
+                        <input type="text" class="form-control" id="username" placeholder="Например: Anna" autocomplete="off">
+                        <div class="error" id="nameError">Введите ваше имя</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="your@email.com">
+                        <div class="error" id="emailError">Введите корректный email</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Пароль</label>
+                        <input type="password" class="form-control" id="password" placeholder="Минимум 6 символов">
+                        <div class="error" id="passwordError">Пароль должен быть не менее 6 символов</div>
+                    </div>
+
+                    <button type="submit" class="btn-register mt-2">
+                        Зарегистрироваться
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <span class="text-muted">Уже есть аккаунт?</span>
+                    <a href="login.html" class="login-link ms-1">Войти</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        clearErrors();
+
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        let isValid = true;
+
+        if (!username) {
+            showError('nameError');
+            document.getElementById('username').classList.add('error-input');
+            isValid = false;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            showError('emailError');
+            document.getElementById('email').classList.add('error-input');
+            isValid = false;
+        }
+
+        if (!password || password.length < 6) {
+            showError('passwordError');
+            document.getElementById('password').classList.add('error-input');
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        let url = 'http://web4.informatics.ru:82/api/ccd29bde7c0f4eb7dacdf306dc93e47a/users/'
+        try {
+            fetch(url).then(function (response){
+                if (response.ok){
+                    return response.json()
+                }
+            }).then(async function (data1) {
+                let ex = {...data1}
+                console.log(ex)
+                ex[email] = {
+                    'username': username,
+                    'password': password
+                };
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(ex)
+                });
+
+                if (response.ok) {
+                    window.location.href = 'main.html';
+                    const userData = {
+                        email: email,
+                        username: username,
+                        isLoggedIn: true
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(userData));
+                }
+
+            })
+
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    });
+
+    function showError(id) {
+        document.getElementById(id).style.display = 'block';
+    }
+
+    function clearErrors() {
+        document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error-input'));
+    }
+
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('input', () => {
+            input.classList.remove('error-input');
+            const errorId = input.id + 'Error';
+            const errorDiv = document.getElementById(errorId.replace('username', 'name'));
+            if (errorDiv) errorDiv.style.display = 'none';
+        });
+    });
+</script>
+</body>
+</html>
