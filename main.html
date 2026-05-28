@@ -507,12 +507,92 @@
 </footer>
 
 <script>
+    // localStorage.clear()
     let in_dev = true
-    console.log(localStorage.getItem('resultsOfTest'))
-    let testRes = localStorage.getItem('resultsOfTest')
+    const themes = [
+        {
+            id: 1,
+            icon: "🍽️",
+            title: "Ресторан",
+            description: "Заказ еды, диалоги с официантом, немецкая кухня",
+            difficulty: "easy",
+            level: "A1-A2",
+            per: 'white'
+        },
+        {
+            id: 2,
+            icon: "✈️",
+            title: "Путешествия",
+            description: "Аэропорт, отель, покупка билетов, экскурсии",
+            difficulty: "medium",
+            level: "A2-B1",
+            per: 'white'
+        },
+        {
+            id: 3,
+            icon: "💼",
+            title: "Работа",
+            description: "Собеседование, деловая переписка, презентации",
+            difficulty: "hard",
+            level: "B1-B2",
+            per: 'white'
+        },
+        {
+            id: 4,
+            icon: "🏠",
+            title: "Дом и семья",
+            description: "Рассказ о семье, домашние дела, увлечения",
+            difficulty: "easy",
+            level: "A1-A2",
+            per: 'white'
+        },
+        {
+            id: 5,
+            icon: "🏥",
+            title: "Здоровье",
+            description: "У врача, аптека, здоровый образ жизни",
+            difficulty: "medium",
+            level: "A2-B1",
+            per: 'white'
+        },
+        {
+            id: 6,
+            icon: "🎓",
+            title: "Учеба",
+            description: "Школа, университет, экзамены, языковые курсы",
+            difficulty: "medium",
+            level: "A2-B1",
+            per: 'white'
+        },
+        {
+            id: 7,
+            icon: "🎬",
+            title: "Культура",
+            description: "Кино, музыка, искусство, традиции Германии",
+            difficulty: "hard",
+            level: "B1-C1",
+            per: 'white'
+        },
+        {
+            id: 8,
+            icon: "💬",
+            title: "Свободная тема",
+            description: "Общайтесь на любые темы, практикуйте спонтанную речь",
+            difficulty: "medium",
+            level: "A2-C1",
+            per: 'white'
+        }
+    ];
+    let testRes = JSON.parse(localStorage.getItem('resultsOfTest'))
     if (testRes){
         for(let i of testRes){
-
+            if (i.per >= 80 && i.per <= 100){
+                themes[i.id-1].per = '90ee90'
+            } else if (i.per >= 40 && i.per <= 60){
+                themes[i.id-1].per = 'yellow'
+            } else if (i.per >= 0 && i.per <= 20){
+                themes[i.id-1].per = 'fc6c85'
+            }
         }
     }
     async function askAI(text) {
@@ -528,8 +608,8 @@
         return String(data.choices[0].message.content);
     }
 
-    async function setArgsToTest(theme, id) {
-        let themesToRender = await askAI(`Сгенерируй пять по обучению немецкому языку на тему ${theme} объектов типа, просто так, без комментариев и нумерации, только в конце каждого блока пиши end, вот пример блока: ` +
+    async function setArgsToTestOrChat(theme, id) {
+        let themesToRender = await askAI(`Сгенерируй пять объектов по обучению немецкому языку на тему ${theme}, просто так, без комментариев и нумерации, только в конце каждого блока пиши end, вот пример блока: ` +
             'Что значит \'Ich liebe dich\'?\n' +
             '"Я тебя ненавижу", "Я тебя люблю", "До свидания", "Привет"\n' +
             'correct: 1\n' +
@@ -562,77 +642,12 @@
     let currentUser = null;
 
 
-    const themes = [
-        {
-            id: 1,
-            icon: "🍽️",
-            title: "Ресторан",
-            description: "Заказ еды, диалоги с официантом, немецкая кухня",
-            difficulty: "easy",
-            level: "A1-A2"
-        },
-        {
-            id: 2,
-            icon: "✈️",
-            title: "Путешествия",
-            description: "Аэропорт, отель, покупка билетов, экскурсии",
-            difficulty: "medium",
-            level: "A2-B1"
-        },
-        {
-            id: 3,
-            icon: "💼",
-            title: "Работа",
-            description: "Собеседование, деловая переписка, презентации",
-            difficulty: "hard",
-            level: "B1-B2"
-        },
-        {
-            id: 4,
-            icon: "🏠",
-            title: "Дом и семья",
-            description: "Рассказ о семье, домашние дела, увлечения",
-            difficulty: "easy",
-            level: "A1-A2"
-        },
-        {
-            id: 5,
-            icon: "🏥",
-            title: "Здоровье",
-            description: "У врача, аптека, здоровый образ жизни",
-            difficulty: "medium",
-            level: "A2-B1"
-        },
-        {
-            id: 6,
-            icon: "🎓",
-            title: "Учеба",
-            description: "Школа, университет, экзамены, языковые курсы",
-            difficulty: "medium",
-            level: "A2-B1"
-        },
-        {
-            id: 7,
-            icon: "🎬",
-            title: "Культура",
-            description: "Кино, музыка, искусство, традиции Германии",
-            difficulty: "hard",
-            level: "B1-C1"
-        },
-        {
-            id: 8,
-            icon: "💬",
-            title: "Свободная тема",
-            description: "Общайтесь на любые темы, практикуйте спонтанную речь",
-            difficulty: "medium",
-            level: "A2-C1"
-        }
-    ];
+
 
     function loadUserData() {
         const userDataStr = localStorage.getItem('currentUser');
         if (!userDataStr) {
-            window.location.href = 'index.html';
+            // window.location.href = 'index.html';
             return null;
         }
 
@@ -649,7 +664,9 @@
     }
 
     async function showRandomWord() {
-        let a = await askAI("сгенерируй слово на немецком, в формате 'слово: перевод: пример предложения в формате предложение (перевод)'")
+        let a = await askAI("Сгенерируй одно немецкое существительное с артиклем и формой множественного числа. Затем дай перевод на русский. Затем составь пример предложения на немецком с этим словом, а в скобках — перевод на русский. Вывод строго по формату:"+
+            "слово: перевод: предложение (перевод)\n"
+            )
         let b = a.split(": ")
 
         document.getElementById('germanWord').textContent = b[0];
@@ -661,8 +678,8 @@
         const themesGrid = document.getElementById('themesGrid');
 
         themesGrid.innerHTML = themes.map(theme => `
-                <div class="col-md-3 col-sm-6">
-                    <div class="theme-card" onclick="selectTheme(${theme.id})">
+                <div class="col-md-3 col-sm-6" style="margin-bottom: 25px">
+                    <div class="theme-card" onclick="selectTheme(${theme.id})" style="background-color: ${theme.per}">
                         <div class="theme-icon">${theme.icon}</div>
                         <div class="theme-title">${theme.title}</div>
                         <div class="theme-description">${theme.description}</div>
@@ -687,8 +704,12 @@
             modalWindow.classList.remove('active');
         });
         let chat = document.getElementById('modalChatBtn');
-        chat.addEventListener('click', function (event) {
+        chat.addEventListener('click', async function (event) {
             modalWindow.classList.remove('active');
+            let loadMenu = document.getElementById('menuLoad')
+            loadMenu.style.display = 'flex';
+            await setArgsToTestOrChat(selectedTheme.title, selectedTheme.id)
+            loadMenu.style.display = 'none';
             localStorage.setItem('selectedTheme', JSON.stringify({
                 id: selectedTheme.id,
                 title: selectedTheme.title,
@@ -702,7 +723,7 @@
             modalWindow.classList.remove('active');
             let loadMenu = document.getElementById('menuLoad')
             loadMenu.style.display = 'flex';
-            await setArgsToTest(selectedTheme.title, selectedTheme.id)
+            await setArgsToTestOrChat(selectedTheme.title, selectedTheme.id)
             loadMenu.style.display = 'none';
             window.location.href = 'test.html'
         })

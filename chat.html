@@ -326,6 +326,24 @@
 </footer>
 
 <script>
+  let questions = []
+  function loadQuestion() {
+    questions = JSON.parse(localStorage.getItem('theme'))
+    for (let i = 0; i < questions.length; i++){
+      questions[i].options = questions[i].options.split('", "')
+      for (let j = 0; j < questions[i].options.length; j++){
+        questions[i].options[j] = questions[i].options[j].replace(/"/g, '')
+      }
+    }
+  }
+  loadQuestion()
+  let texts = []
+  for (let i of questions){
+    texts.push(i.text)
+  }
+  console.log(texts)
+
+
   let messages = []
   async function askAI(text, theme, user) {
 
@@ -334,10 +352,14 @@
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        messages: [{role: "user", content: `Ты учитель немецкого языка, тема ${theme.title}, а пользователя зовут ${user.username}, обращайся в основном по имени, общайся с ним по теме, но не давай уйти от темы, помогай, ОБЩЕНИЕ ПРОИСХОДИТ ПРЯМО СЕЙЧАС, не надо каждый раз говорить привет.
+        messages: [{role: "user", content: `Ты — учитель немецкого языка. Текущая тема: ${theme.title}. Ученика зовут ${user.username}. Обращайся к нему преимущественно по имени.
 
-Вот запрос ученика: ${text}
-Вот весь диалог: '${messages.join(', ')}'`}]
+Общайся строго в рамках текущей темы, не позволяй ученику отвлекаться на другие темы. Помогай, но не переходи к объяснениям, если ученик не запросил их явно. Общение идёт прямо сейчас. Не используй фразы-приветствия типа «Привет», «Здравствуй» и т.п. в каждом ответе.
+
+Ты обязательно должен проговаривать следующие вопросы, чтобы ученик мог на них ответить: ${texts}. Включай их в диалог естественным образом.
+
+Вот текущий запрос ученика: ${text}
+Вот вся история диалога: ${messages.join(', ')}`}]
       })
     });
 

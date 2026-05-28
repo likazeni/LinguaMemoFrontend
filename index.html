@@ -196,7 +196,7 @@
     }
 
     try {
-      const response = await fetch('http://web4.informatics.ru:82/api/ccd29bde7c0f4eb7dacdf306dc93e47a/users');
+      const response = await fetch('https://linguamemobackend.onrender.com/api/ccd29bde7c0f4eb7dacdf306dc93e47a/users');
 
       const data = await response.json();
       if (data[email].password == password) {

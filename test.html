@@ -162,7 +162,22 @@
     if (percent >= 80) message = "🎉 Отлично! Ты хорошо знаешь немецкий!";
     else if (percent >= 60) message = "👍 Неплохо! Продолжай в том же духе!";
     else message = "📚 Попрактикуйся в чате и попробуй снова!";
-    localStorage.setItem('resultsOfTest', JSON.stringify({'per':percent, 'id': localStorage.getItem('idOfTest')-1}))
+    let a = []
+    if(JSON.parse(localStorage.getItem('resultsOfTest'))) {
+      a = JSON.parse(localStorage.getItem('resultsOfTest'))
+    }
+    let b = [...a]
+    let ids = []
+    for (let i of b){
+      ids.push(i.id)
+    }
+    if (ids.includes(Number(localStorage.getItem('idOfTest')))){
+      let idx = ids.indexOf(Number(localStorage.getItem('idOfTest')))
+      b[idx] = {'per':percent, 'id': Number(localStorage.getItem('idOfTest'))}
+    } else {
+      b.push({'per': percent, 'id': Number(localStorage.getItem('idOfTest'))})
+    }
+    localStorage.setItem('resultsOfTest', JSON.stringify(b))
     let html = `
             <div class="test-container">
                 <div class="result-card">
